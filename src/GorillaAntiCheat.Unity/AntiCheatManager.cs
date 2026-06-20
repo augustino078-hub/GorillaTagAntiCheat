@@ -18,7 +18,7 @@ namespace GorillaAntiCheat.Unity
     {
         private AntiCheatEngine _engine = null!;
         private IRigProvider _rigProvider = null!;
-        private DebugOverlay _overlay = null!;
+        private DetectionPanel _panel = null!;
 
         private readonly List<RigSample> _sampleBuffer = new List<RigSample>(16);
         private readonly HashSet<int> _knownActors = new HashSet<int>();
@@ -30,7 +30,12 @@ namespace GorillaAntiCheat.Unity
         private double _tickInterval;
 
         public AntiCheatEngine Engine => _engine;
-        public bool OverlayEnabled { get; set; } = true;
+
+        /// <summary>Whether the in-game UI panel is currently shown.</summary>
+        public bool OverlayEnabled { get; set; }
+
+        /// <summary>Key that toggles the in-game UI open/closed. Defaults to Left Alt.</summary>
+        public KeyCode ToggleKey { get; set; } = KeyCode.LeftAlt;
 
         /// <summary>Initialises the manager. Call once after the component is added.</summary>
         public void Configure(AntiCheatConfig? config = null, IRigProvider? rigProvider = null)
@@ -38,7 +43,7 @@ namespace GorillaAntiCheat.Unity
             _engine = new AntiCheatEngine(config);
             _tickInterval = _engine.Config.TickDeltaSeconds;
             _rigProvider = rigProvider ?? new GorillaRigProvider(~0);
-            _overlay = new DebugOverlay(_engine);
+            _panel = new DetectionPanel(_engine, GorillaNames.Resolve);
 
             _engine.EscalationChanged += OnEscalationChanged;
             _engine.ReplayCaptured += OnReplayCaptured;
@@ -48,6 +53,9 @@ namespace GorillaAntiCheat.Unity
         {
             if (_engine == null)
                 return;
+
+            if (Input.GetKeyDown(ToggleKey))
+                OverlayEnabled = !OverlayEnabled;
 
             // Accumulate real time and run zero-or-more fixed ticks. This decouples the
             // anti-cheat tick rate from the render frame rate (VR runs 72–120+ fps).
@@ -150,7 +158,7 @@ namespace GorillaAntiCheat.Unity
         private void OnGUI()
         {
             if (OverlayEnabled)
-                _overlay?.Draw();
+                _panel?.Draw();
         }
 
         private void OnDestroy()

@@ -29,7 +29,7 @@ CI-verified independent of Unity:
 | Project | Framework | Built in CI | Purpose |
 |---|---|---|---|
 | `GorillaAntiCheat.Core` | `netstandard2.0` | ✅ | All detection logic. No Unity/Photon deps. Struct-based, allocation-light, no LINQ on the hot path. |
-| `GorillaAntiCheat.Unity` | `netstandard2.1` | ❌ (needs game DLLs) | Thin BepInEx/Photon integration: `MonoBehaviour`, plugin entrypoint, rig sampler, Photon observer, IMGUI overlay. |
+| `GorillaAntiCheat.Unity` | `netstandard2.1` | ❌ (needs game DLLs) | Thin BepInEx/Photon integration: `MonoBehaviour`, plugin entrypoint, rig sampler, Photon observer, in-game detections panel. |
 | `GorillaAntiCheat.Tests` | `net8.0` | ✅ | xUnit tests for every detector + the scoring engine. |
 
 ```
@@ -43,7 +43,7 @@ Photon / Unity  ──sample──►  AntiCheatManager (MonoBehaviour, fixed ti
                              └─ ReplayRecorder (last N seconds per player)
                                    │ escalation events + replay captures
                                    ▼
-                            DebugOverlay  /  ReplayWriter (CSV)  /  logs
+                            DetectionPanel (in-game UI)  /  ReplayWriter (CSV)  /  logs
 ```
 
 ### Core entrypoint — `AntiCheatEngine`
@@ -167,6 +167,14 @@ static class TagHook
 ```
 
 ---
+
+## In-game detections UI
+
+Press **Left Alt** (configurable: `[Debug] ToggleKey`) to open/close the on-screen
+`DetectionPanel`. It lists every tracked player by their **Gorilla Tag username** —
+resolved from the Photon nickname the leaderboard uses (`GorillaNames.Resolve`) — with
+their escalation level, suspicion score, and the movement/tag/network/metadata
+breakdown. It's read-only and never influences scoring.
 
 ## Design rules (enforced throughout)
 - **Never** rely on a single detection as proof — all violations are multi-signal weighted.

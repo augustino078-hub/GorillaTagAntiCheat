@@ -61,7 +61,9 @@ namespace GorillaAntiCheat.Unity
             manager.Engine.SetDetectorEnabled("TagIntegrity", Bind("Detectors", "TagIntegrity", true, "Enable tag integrity detector."));
             manager.Engine.SetDetectorEnabled("Network", Bind("Detectors", "Network", true, "Enable network detector."));
             manager.Engine.SetDetectorEnabled("Metadata", Bind("Detectors", "Metadata", true, "Enable metadata context detector."));
-            manager.OverlayEnabled = Bind("Debug", "Overlay", true, "Show the on-screen suspicion overlay.");
+
+            manager.ToggleKey = Bind("Debug", "ToggleKey", KeyCode.LeftAlt, "Key that opens/closes the in-game UI panel.");
+            manager.OverlayEnabled = Bind("Debug", "OverlayVisibleOnStart", false, "Show the in-game UI panel immediately on start.");
         }
 
         private T Bind<T>(string section, string key, T defaultValue, string description)
