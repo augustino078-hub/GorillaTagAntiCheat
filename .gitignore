@@ -1,0 +1,25 @@
+# Build output
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+
+# .NET
+project.lock.json
+artifacts/
+*.nupkg
+
+# Rider / VS / VSCode
+.idea/
+.vs/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local game-managed assemblies (do not commit proprietary game DLLs)
+libs/
+GameManaged/
